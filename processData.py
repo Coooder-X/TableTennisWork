@@ -1,6 +1,4 @@
 import json
-import openpyxl
-import Rally
 import utils
 from TechScoreCase import *
 
@@ -15,7 +13,6 @@ def process(fileName):
     roundList = []
     """
 
-    # with open('test.json', 'r', encoding='utf-8') as f:
     with open(fileName, 'r', encoding='utf-8') as f:
         jsonFile = f.read()
         jsonFile = json.loads(jsonFile)
@@ -48,13 +45,16 @@ def process(fileName):
     lineScoreCaseDict = {}
     for playerGroup in playerList:
         for player in playerGroup:
-            lineScoreCaseDict[player['name']] = {
-                '反手给斜线': 0,
-                '正手给斜线': 0,
-                '反手给直线': 0,
-                '正手给直线': 0,
-                'total': 0
-            }
+            lineScoreCaseDict[player['name']] = {}
+            for tecType in ['接发球', '第三拍', '第四拍', '相持']:
+                lineScoreCaseDict[player['name']][tecType] = {
+                    '反手给斜线': 0,
+                    '正手给斜线': 0,
+                    '反手给直线': 0,
+                    '正手给直线': 0,
+                    'total': 0
+                }
+    print(lineScoreCaseDict)
 
     ''' serveDict 用于存储每个运动员的发球轮得分情况
     {
@@ -84,8 +84,6 @@ def process(fileName):
         # print(playerList[utils.getServeSide(pointList[0])][0]['name'])  # 测试判断发球方的函数
 
         for point in pointList:  # point 记录该分中的信息
-            # print(playerList[utils.getServeSide(point)][0]['name'])  # 测试判断发球方的函数
-
             rallyList = point['list']  # rallyList 记录该分中所有挥拍，每个元素是一个挥拍
             serveSide = playerList[utils.getServeSide(point)][0]  # 下标 0 表示一方的第 0 个球员，单打都为0，serveSide 存储运动员对象
             winSide = playerList[point['winSide']][0]
@@ -104,21 +102,14 @@ def process(fileName):
             # 根据当前 rally 信息，更新运动员（身位-落点）线路得分情况
             utils.updateScoreCase(scoreCaseDict, rallyList, playerList[0][0], playerList[1][0], serveSide, winSide)
             # 根据当前 rally 信息，更新运动员（身位-落点1-落点2）线路得分情况
-            if rallyList[-2]['index'] > 3:
-                utils.updateLineScoreCase(lineScoreCaseDict, rallyList, playerList[0][0], playerList[1][0], serveSide,
-                                          winSide)
-
-            # print(recServe)
+            utils.updateLineScoreCase(lineScoreCaseDict, rallyList, playerList[0][0], playerList[1][0],
+                                      winSide, rallyList[-2]['index'])
             serveList.append(recServe)
-        # print('\nround over------------')
 
-    # print(len(serveList))
-    # print(count)
-    print(serveDict['王曼昱'])
+    print(serveDict)
     scoreCaseDict['陈梦'].display()
     print('----------------')
     scoreCaseDict['王曼昱'].display()
-
     print(lineScoreCaseDict)
-
     print(c1, c2, c3)
+    utils.createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, [player1, player2])

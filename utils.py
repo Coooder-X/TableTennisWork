@@ -1,4 +1,8 @@
 # 判断发球方，返回运动员下标
+import os
+import openpyxl
+
+
 def getServeSide(point):
     if point['startSide'] != -1:
         return point['startSide']
@@ -25,7 +29,7 @@ def updateServeDict(serveDict, servePoint, serveSide, winSide):
 
 
 #   判断 player1 的击球是斜线还是直线 diagonal | straight
- #  strikePos 是 p1 挥拍的身位，point1 是 p1 接到的球的落点，point2 是 p1 打到 p2 桌上的落点
+#  strikePos 是 p1 挥拍的身位，point1 是 p1 接到的球的落点，point2 是 p1 打到 p2 桌上的落点
 def getStrokeDir(strikePos, point1, point2, player1, player2):
     straight = 'straight'
     diagonal = 'diagonal'
@@ -81,70 +85,6 @@ def getStrokeDir(strikePos, point1, point2, player1, player2):
                 return [forehand, diagonal]
             if (point1[0] == 'B' and point2[0] == 'B') or (point1[0] == 'B' and point2[0] == 'M'):
                 return [forehand, straight]
-'''
-        if point1[0] == point2[0]:
-            if point1[0] == point2[0] == 'F':
-                return diagonal
-            if point1[0] == point2[0] == 'B':
-                return diagonal
-            if point1[0] == point2[0] == 'M':
-                return straight
-        else:
-            if point1[0] == 'F':
-                if point2[0] == 'B':
-                    return straight
-                else:
-                    return diagonal
-            elif point1[0] == 'B':
-                if point2[0] == 'F':
-                    return straight
-                else:
-                    return diagonal
-            else:   # point1[0] == 'M'
-                return diagonal
-    else:   #   执拍手不同，需要判断一下斜线
-        if point1[0] == point2[0]:
-            if point1[0] == point2[0] == 'F':
-                return straight
-            if point1[0] == point2[0] == 'B':
-                return straight
-            if point1[0] == point2[0] == 'M':
-                return straight
-        else:
-            if point1[0] == 'F':
-                if point2[0] == 'B':
-                    return diagonal
-                else:
-                    return straight
-            elif point1[0] == 'B':
-                if point2[0] == 'F':
-                    return diagonal
-                else:
-                    return straight
-            else:  # point1[0] == 'M'
-                return diagonal
-'''
-
-# 根据 rallyList、最后一拍之间的2个球员、得分球员，推断获胜方是用什么线路赢球的，例如“反手给斜线”，并更新 dict
-def updateStrokeDict(rallyList, player1, player2, winSide):
-    winStroke = rallyList[-2]
-    lastStroke = rallyList[-1]
-    winIndex = winStroke['index']   # 获胜方的最后一击是第几拍
-    # 反手给斜线 Back_2_Diagonal
-    dirction = getStrokeDir(winStroke['BallPosition']['value'], lastStroke['BallPosition']['value'], player1, player2)  # 获胜方最后一击的击球方向
-    winBody = winStroke['StrikePosition']['value']  # 获胜方最后一击的身位
-    if winBody == 'S1':
-        pass
-    elif winBody == 'S2':
-        pass
-    elif winBody == 'F':
-        pass
-    elif winBody == 'B':
-        pass
-    elif winBody == 'T':
-        pass
-    elif winBody == 'P':
-        pass
 
 
 def updateScoreCase(scoreCaseDict, rallyList, player1, player2, serveSide, winSide):
@@ -155,7 +95,6 @@ def updateScoreCase(scoreCaseDict, rallyList, player1, player2, serveSide, winSi
     lastStroke = rallyList[-1]
     winStrike = winStroke['StrikePosition']['value']
     winBallPos = lastStroke['BallPosition']['value']
-    # if player1['rightHand'] == player2['rightHand']:  # 执拍手相同
     # 赢的一方的最后一拍是相持阶段的，那么 scoreCaseDict 中获胜方运动员的相持得分中，对应的（身位-落点）线路得分 +1
     if winStroke['index'] > 3:  # 双方击球大于4板认为是相持
         scoreCaseDict[winSide['name']].strike_ball_score_more[mp[winStrike]][mp[winBallPos]] += 1
@@ -176,7 +115,7 @@ def updateScoreCase(scoreCaseDict, rallyList, player1, player2, serveSide, winSi
     #         scoreCaseDict[winSide['name']].strike_ball_rec[mp[winStrike]][mp[winBallPos]] += 1
 
 
-def updateLineScoreCase(lineScoreCaseDict, rallyList, player1, player2, serveSide, winSide):
+def updateLineScoreCase(lineScoreCaseDict, rallyList, player1, player2, winSide, techIndex):
     winStroke = rallyList[-2]
     lastStroke = rallyList[-1]
     winStrike = winStroke['StrikePosition']['value']
@@ -184,14 +123,94 @@ def updateLineScoreCase(lineScoreCaseDict, rallyList, player1, player2, serveSid
     point2 = lastStroke['BallPosition']['value']
     lineDir = getStrokeDir(winStrike, point1, point2, player1, player2)
     # print(lineDir)
+    mp = {1: '接发球', 2: '第三拍', 3: '第四拍', 4: '相持'}
     if lineDir is not None:
-        if lineDir[0] == 'B' and lineDir[1] == 'diagonal':
-            lineScoreCaseDict[winSide['name']]['反手给斜线'] += 1
-        if lineDir[0] == 'F' and lineDir[1] == 'diagonal':
-            lineScoreCaseDict[winSide['name']]['正手给斜线'] += 1
-        if lineDir[0] == 'B' and lineDir[1] == 'straight':
-            lineScoreCaseDict[winSide['name']]['反手给直线'] += 1
-        if lineDir[0] == 'F' and lineDir[1] == 'straight':
-            lineScoreCaseDict[winSide['name']]['正手给直线'] += 1
-    lineScoreCaseDict[winSide['name']]['total'] += 1
+        if 3 >= techIndex > 0:
+            if lineDir[0] == 'B' and lineDir[1] == 'diagonal':
+                lineScoreCaseDict[winSide['name']][mp[techIndex]]['反手给斜线'] += 1
+            if lineDir[0] == 'F' and lineDir[1] == 'diagonal':
+                lineScoreCaseDict[winSide['name']][mp[techIndex]]['正手给斜线'] += 1
+            if lineDir[0] == 'B' and lineDir[1] == 'straight':
+                lineScoreCaseDict[winSide['name']][mp[techIndex]]['反手给直线'] += 1
+            if lineDir[0] == 'F' and lineDir[1] == 'straight':
+                lineScoreCaseDict[winSide['name']][mp[techIndex]]['正手给直线'] += 1
+            lineScoreCaseDict[winSide['name']][mp[techIndex]]['total'] += 1
+        elif techIndex > 3:
+            if lineDir[0] == 'B' and lineDir[1] == 'diagonal':
+                lineScoreCaseDict[winSide['name']]['相持']['反手给斜线'] += 1
+            if lineDir[0] == 'F' and lineDir[1] == 'diagonal':
+                lineScoreCaseDict[winSide['name']]['相持']['正手给斜线'] += 1
+            if lineDir[0] == 'B' and lineDir[1] == 'straight':
+                lineScoreCaseDict[winSide['name']]['相持']['反手给直线'] += 1
+            if lineDir[0] == 'F' and lineDir[1] == 'straight':
+                lineScoreCaseDict[winSide['name']]['相持']['正手给直线'] += 1
+            lineScoreCaseDict[winSide['name']]['相持']['total'] += 1
 
+
+def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNameList):  # playerNameList, serveDict, scoreCaseDict, lineScoreCaseDict
+    #   去除文件后缀名
+    (filePath, tmpFileName) = os.path.split(fileName)
+    (fileName, fileType) = os.path.splitext(tmpFileName)
+    typeDict = {'BS': '反手短', 'BH': '反手半出台', 'BL': '反手长', 'MS': '中路短', 'MH': '中路半出台',
+          'ML': '中路长', 'FS': '正手短', 'FH': '正手半出台', 'FL': '正手长'}
+
+    for playerName in serveDict.keys():
+        exl = openpyxl.Workbook()
+        sheet = exl.create_sheet('Sheet1', 0)  # 打开该Excel里对应的sheet
+        #   ---------- 填入发球部分 ----------
+        posTypeList = list(serveDict[playerName].keys())[2:]  # 发球出现的所有落点种类
+        posTypeList.sort()
+        # print(posTypeList)
+        sheet.cell(2, 1, '发球落点')
+        sheet.cell(2, 2, '得分')
+        sheet.cell(3, 2, '失分')
+        for i in range(len(posTypeList) + 1): # 枚举该运动员发球出现的所有落点种类，写入发球表头
+            if i == len(posTypeList):
+                sheet.cell(1, i + 3, '合计')
+                sheet.cell(2, i + 3, serveDict[playerName]['totalWin'])
+                sheet.cell(3, i + 3, serveDict[playerName]['totalLost'])
+                break
+            sheet.cell(1, i + 3, typeDict[posTypeList[i]])
+            sheet.cell(2, i + 3, serveDict[playerName][posTypeList[i]]['win'])
+            sheet.cell(3, i + 3, serveDict[playerName][posTypeList[i]]['lost'])
+
+        #   ---------- 填入线路左侧部分 ----------
+        beginLine = 5
+        cur = 0
+        for techIndex in list(lineScoreCaseDict[playerName].keys()):    #   techIndex 为接发球、第三拍、相持等等
+            sheet.cell(beginLine + cur * 3 + 1, 1, techIndex if techIndex != '相持' else playerName + techIndex)
+            sheet.cell(beginLine + cur * 3 + 1, 2, '得分')
+            lineTypeList = list(lineScoreCaseDict[playerName][techIndex].keys())   #   lineTypeList 元素为线路种类，如反手给斜线
+            for i in range(len(lineTypeList)):
+                sheet.cell(beginLine + cur * 3, i + 3, lineTypeList[i] if lineTypeList[i] != 'total' else '合计')
+            for i in range(len(lineTypeList)): # 枚举该运动员发球出现的所有落点种类，写入发球表头
+                sheet.cell(beginLine + cur * 3 + 1, i + 3, lineScoreCaseDict[playerName][techIndex][lineTypeList[i]])
+            cur += 1
+        # 相持的统计需要在下一行加上对方选手的
+        anotherPlayerName = ''
+        for name in playerNameList:
+            if name != playerName:
+                anotherPlayerName = name
+                break
+        sheet.cell(beginLine + cur * 3 - 1, 1, anotherPlayerName + '相持')
+        sheet.cell(beginLine + cur * 3 - 1, 2, '得分')
+        lineTypeList = list(lineScoreCaseDict[anotherPlayerName]['相持'].keys())  # lineTypeList 元素为线路种类，如反手给斜线
+        for i in range(len(lineTypeList)):  # 枚举该运动员发球出现的所有落点种类，写入发球表头
+            sheet.cell(beginLine + cur * 3 - 1, i + 3, lineScoreCaseDict[anotherPlayerName]['相持'][lineTypeList[i]])
+
+        #   ---------- 填入线路左侧部分 ----------
+        strikeMp = {0: '反手', 1: '正手', 2: '侧身', 3: '反侧身'}
+        ballMp = {0: '反手长', 1: '反手半出台', 2: '反手长', 3: '中路长', 4: '中路半出台',
+                  5: '中路长', 6: '正手短', 7: '正手半出台', 8: '正手长', 9: '擦网擦边'}
+        tmp = scoreCaseDict[playerName]
+        techIndexList = [tmp.strike_ball_score_rec, tmp.strike_ball_score_3, tmp.strike_ball_score_4, tmp.strike_ball_score_more]
+        beginLine = 5
+        cur = 0
+        for techIndex in techIndexList:
+            for i in range(4):
+                for j in range(9):
+                    sheet.cell(beginLine + cur * 3, i * 4 + j + len(lineTypeList) + 4, strikeMp[i] + '给' + ballMp[j])
+                    sheet.cell(beginLine + cur * 3 + 1, i * 4 + j + len(lineTypeList) + 4, techIndex[i][j])
+            cur += 1
+
+        exl.save(fileName + '(' + playerName + '习惯性出手线路情况)' + '.xlsx')

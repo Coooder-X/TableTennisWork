@@ -17,7 +17,11 @@ def showinfo():
     if os.path.isfile(fileName):
         if fileName[-4:] != 'json':
             tkinter.messagebox.showinfo('提示', '该文件不是json文件，请输入json文件')
-        processData.process(entry.get())
+        try:
+            processData.process(entry.get())
+        except PermissionError:
+            tkinter.messagebox.showinfo('提示', '文件可能已打开或被占用，请先关闭')
+
     else:
         tkinter.messagebox.showinfo('提示', '文件不存在')
 
@@ -34,11 +38,9 @@ wh = 300
 x = (sw - ww) / 2
 y = (sh - wh) / 2
 win.geometry("%dx%d+%d+%d" % (ww, wh, x, y))
-# win.geometry("400x300+200+50")
 
 # 进入消息循环，可以写控件
 fm1 = tkinter.Frame(win)
-# fm2 = tkinter.Frame(win)
 label = tkinter.Label(win,
                       text="请输入文件绝对路径",
                       fg="red",
@@ -48,15 +50,13 @@ label = tkinter.Label(win,
                       # wraplength=100,
                       justify="center",
                       anchor="ne")
-# label.grid(row=0, column=0)
 label.pack(side=TOP, pady=50)
 
 entry = tkinter.Entry(fm1, width=25, font=("Consolas", 15))
 entry.pack(side=LEFT)
-# entry.grid(row=1, column=0)
+entry.focus()
 
 button = tkinter.Button(fm1, text="生成", command=showinfo)
-# button.grid(row=1, column=1)
 button.pack(side=RIGHT, padx=3)
 fm1.pack()
 
