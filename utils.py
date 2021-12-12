@@ -55,7 +55,7 @@ def getStrokeDir(strikePos, point1, point2, player1, player2):
                     or ([point1[0] == 'M' == point2[0]]):
                 return [forehand, straight]
         elif strikePos == reBackhand:
-            if (point1[0] == 'B' and point2[0] == 'F') or (point1[0] == 'M' and point2[0] == 'B'):
+            if (point1[0] == point2[0] == 'F') or (point1[0] == 'M' and point2[0] == 'B'):
                 return [backhand, diagonal]
             if (point1[0] == 'F' and point2[0] == 'M') or (point1[0] == 'F' and point2[0] == 'B'):
                 return [backhand, straight]
@@ -79,7 +79,7 @@ def getStrokeDir(strikePos, point1, point2, player1, player2):
                     or ([point1[0] == 'M' == point2[0]]):
                 return [forehand, straight]
         elif strikePos == reBackhand:
-            if (point1[0] == 'B' and point2[0] == 'B') or (point1[0] == 'M' and point2[0] == 'F'):
+            if (point1[0] == 'F' and point2[0] == 'B') or (point1[0] == 'M' and point2[0] == 'F'):
                 return [backhand, diagonal]
             if (point1[0] == 'F' and point2[0] == 'M') or (point1[0] == 'F' and point2[0] == 'F'):
                 return [backhand, straight]
