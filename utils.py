@@ -1,6 +1,9 @@
 # 判断发球方，返回运动员下标
 import os
 import openpyxl
+from openpyxl.styles import Alignment
+
+import TechScoreCase
 
 
 def getServeSide(point):
@@ -37,18 +40,18 @@ def getStrokeDir(strikePos, point1, point2, player1, player2):
     forehand = 'F'
     reBackhand = 'T'
     reForehand = 'P'
-    if player1['rightHand'] == player2['rightHand']:    # 执拍手相同，不需要判断
+    if player1['rightHand'] == player2['rightHand']:  # 执拍手相同，不需要判断
         if strikePos == backhand:
             if (point1[0] == 'B' == point2[0]) or (point1[0] == 'M' and point2[0] == 'B'):
                 return [backhand, diagonal]
-            if (point1[0] == 'B' and point2[0] == 'F') or (point1[0] == 'B' and point2[0] == 'M')\
+            if (point1[0] == 'B' and point2[0] == 'F') or (point1[0] == 'B' and point2[0] == 'M') \
                     or (point1[0] == 'M' and point2[0] == 'F') or (point1[0] == point2[0] == 'M'):
                 return [backhand, straight]
         elif strikePos == forehand:
-            if (point1[0] == 'F' == point2[0]) or (point1[0] == 'M' and point2[0] == 'F')\
+            if (point1[0] == 'F' == point2[0]) or (point1[0] == 'M' and point2[0] == 'F') \
                     or (point1[0] == 'M' and point2[0] == 'B'):
                 return [forehand, diagonal]
-            if (point1[0] == 'F' and point2[0] == 'M') or (point1[0] == 'F' and point2[0] == 'B')\
+            if (point1[0] == 'F' and point2[0] == 'M') or (point1[0] == 'F' and point2[0] == 'B') \
                     or ([point1[0] == 'M' == point2[0]]):
                 return [forehand, straight]
         elif strikePos == reBackhand:
@@ -61,7 +64,7 @@ def getStrokeDir(strikePos, point1, point2, player1, player2):
                 return [forehand, diagonal]
             if (point1[0] == 'B' and point2[0] == 'F') or (point1[0] == 'B' and point2[0] == 'M'):
                 return [forehand, straight]
-    else:   #   执拍手不同，需要判断一下
+    else:  # 执拍手不同，需要判断一下
         if strikePos == backhand:
             if (point1[0] == 'B' and point2[0] == 'F') or (point1[0] == 'M' and point2[0] == 'F'):
                 return [backhand, diagonal]
@@ -147,12 +150,13 @@ def updateLineScoreCase(lineScoreCaseDict, rallyList, player1, player2, winSide,
             lineScoreCaseDict[winSide['name']]['相持']['total'] += 1
 
 
-def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNameList):  # playerNameList, serveDict, scoreCaseDict, lineScoreCaseDict
+def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict,
+                playerNameList):  # playerNameList, serveDict, scoreCaseDict, lineScoreCaseDict
     #   去除文件后缀名
     (filePath, tmpFileName) = os.path.split(fileName)
     (fileName, fileType) = os.path.splitext(tmpFileName)
     typeDict = {'BS': '反手短', 'BH': '反手半出台', 'BL': '反手长', 'MS': '中路短', 'MH': '中路半出台',
-          'ML': '中路长', 'FS': '正手短', 'FH': '正手半出台', 'FL': '正手长'}
+                'ML': '中路长', 'FS': '正手短', 'FH': '正手半出台', 'FL': '正手长'}
 
     for playerName in serveDict.keys():
         exl = openpyxl.Workbook()
@@ -164,7 +168,7 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNam
         sheet.cell(2, 1, '发球落点')
         sheet.cell(2, 2, '得分')
         sheet.cell(3, 2, '失分')
-        for i in range(len(posTypeList) + 1): # 枚举该运动员发球出现的所有落点种类，写入发球表头
+        for i in range(len(posTypeList) + 1):  # 枚举该运动员发球出现的所有落点种类，写入发球表头
             if i == len(posTypeList):
                 sheet.cell(1, i + 3, '合计')
                 sheet.cell(2, i + 3, serveDict[playerName]['totalWin'])
@@ -177,13 +181,13 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNam
         #   ---------- 填入线路左侧部分 ----------
         beginLine = 5
         cur = 0
-        for techIndex in list(lineScoreCaseDict[playerName].keys()):    #   techIndex 为接发球、第三拍、相持等等
+        for techIndex in list(lineScoreCaseDict[playerName].keys()):  # techIndex 为接发球、第三拍、相持等等
             sheet.cell(beginLine + cur * 3 + 1, 1, techIndex if techIndex != '相持' else playerName + techIndex)
             sheet.cell(beginLine + cur * 3 + 1, 2, '得分')
-            lineTypeList = list(lineScoreCaseDict[playerName][techIndex].keys())   #   lineTypeList 元素为线路种类，如反手给斜线
+            lineTypeList = list(lineScoreCaseDict[playerName][techIndex].keys())  # lineTypeList 元素为线路种类，如反手给斜线
             for i in range(len(lineTypeList)):
                 sheet.cell(beginLine + cur * 3, i + 3, lineTypeList[i] if lineTypeList[i] != 'total' else '合计')
-            for i in range(len(lineTypeList)): # 枚举该运动员发球出现的所有落点种类，写入发球表头
+            for i in range(len(lineTypeList)):  # 枚举该运动员发球出现的所有落点种类，写入发球表头
                 sheet.cell(beginLine + cur * 3 + 1, i + 3, lineScoreCaseDict[playerName][techIndex][lineTypeList[i]])
             cur += 1
         # 相持的统计需要在下一行加上对方选手的
@@ -203,7 +207,8 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNam
         ballMp = {0: '反手长', 1: '反手半出台', 2: '反手长', 3: '中路长', 4: '中路半出台',
                   5: '中路长', 6: '正手短', 7: '正手半出台', 8: '正手长', 9: '擦网擦边'}
         tmp = scoreCaseDict[playerName]
-        techIndexList = [tmp.strike_ball_score_rec, tmp.strike_ball_score_3, tmp.strike_ball_score_4, tmp.strike_ball_score_more]
+        techIndexList = [tmp.strike_ball_score_rec, tmp.strike_ball_score_3, tmp.strike_ball_score_4,
+                         tmp.strike_ball_score_more]
         beginLine = 5
         cur = 0
         for techIndex in techIndexList:
@@ -211,6 +216,71 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, playerNam
                 for j in range(9):
                     sheet.cell(beginLine + cur * 3, i * 4 + j + len(lineTypeList) + 4, strikeMp[i] + '给' + ballMp[j])
                     sheet.cell(beginLine + cur * 3 + 1, i * 4 + j + len(lineTypeList) + 4, techIndex[i][j])
+                sheet.cell(beginLine + cur * 3, i * 4 + 9 + len(lineTypeList) + 4, '合计')
+                sheet.cell(beginLine + cur * 3 + 1, i * 4 + 9 + len(lineTypeList) + 4, TechScoreCase.calSum(techIndex))
             cur += 1
 
+        style_excel(sheet)
+
         exl.save(fileName + '(' + playerName + '习惯性出手线路情况)' + '.xlsx')
+
+
+# 生成列名字典，只是为了方便修改列宽时指定列，key:数字，从1开始；value:列名，从A开始
+def get_num_colnum_dict():
+    '''
+:return: 返回字典：{1:'A', 2:'B', ...... , 52:'AZ'}
+'''
+    num_str_dict = {}
+    A_Z = [chr(a) for a in range(ord('A'), ord('Z') + 1)]
+    AA_AZ = ['A' + chr(a) for a in range(ord('A'), ord('Z') + 1)]
+    A_AZ = A_Z + AA_AZ
+    for i in A_AZ:
+        num_str_dict[A_AZ.index(i) + 1] = i
+    return num_str_dict
+
+
+# 自适应列宽
+def style_excel(sheet):
+    '''
+    :param sheet_name:  excel中的sheet名
+    :return:
+    '''
+    # 选择对应的sheet
+    # 获取最大行数与最大列数
+    max_column = sheet.max_column
+    max_row = sheet.max_row
+
+    # 将每一列，单元格列宽最大的列宽值存到字典里，key:列的序号从1开始(与字典num_str_dic中的key对应)；value:列宽的值
+    max_column_dict = {}
+
+    # 生成列名字典，只是为了方便修改列宽时指定列，key:数字，从1开始；value:列名，从A开始
+    num_str_dict = get_num_colnum_dict()
+
+    # 遍历全部列
+    for i in range(1, max_column + 1):
+        # 遍历每一列的全部行
+        for j in range(1, max_row + 1):
+            #   为每个单元格添加居中样式
+            align = Alignment(horizontal='center', vertical='center')
+            sheet.cell(row=j, column=i).alignment = align
+            column = 0
+            # 获取j行i列的值
+            sheet_value = sheet.cell(row=j, column=i).value
+            # 通过列表生成式生成字符列表，将当前获取到的单元格的str值的每一个字符放在一个列表中（列表中一个元素是一个字符）
+            sheet_value_list = [k for k in str(sheet_value)]
+            # 遍历当前单元格的字符列表
+            for v in sheet_value_list:
+                # 判定长度，一个数字或一个字母，单元格列宽+=1.1，其它+=2.2（长度可根据需要自行修改，经测试一个字母的列宽长度大概为1）
+                if ord(v) <= 256:
+                    column += 1.1
+                else:
+                    column += 2.2
+            # 当前单元格列宽与字典中的对比，大于字典中的列宽值则将字典更新。如果字典没有这个key，抛出异常并将值添加到字典中
+            try:
+                if column > max_column_dict[i]:
+                    max_column_dict[i] = column
+            except Exception as e:
+                max_column_dict[i] = column
+    # 此时max_column_dict字典中已存有当前sheet的所有列的最大列宽值，直接遍历字典修改列宽
+    for key, value in max_column_dict.items():
+        sheet.column_dimensions[num_str_dict[key]].width = value + 1
