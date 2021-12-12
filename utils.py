@@ -204,7 +204,7 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict,
 
         #   ---------- 填入线路左侧部分 ----------
         strikeMp = {0: '反手', 1: '正手', 2: '侧身', 3: '反侧身'}
-        ballMp = {0: '反手长', 1: '反手半出台', 2: '反手长', 3: '中路长', 4: '中路半出台',
+        ballMp = {0: '反手短', 1: '反手半出台', 2: '反手长', 3: '中路短', 4: '中路半出台',
                   5: '中路长', 6: '正手短', 7: '正手半出台', 8: '正手长', 9: '擦网擦边'}
         tmp = scoreCaseDict[playerName]
         techIndexList = [tmp.strike_ball_score_rec, tmp.strike_ball_score_3, tmp.strike_ball_score_4,
@@ -213,11 +213,11 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict,
         cur = 0
         for techIndex in techIndexList:
             for i in range(4):
-                for j in range(9):
-                    sheet.cell(beginLine + cur * 3, i * 4 + j + len(lineTypeList) + 4, strikeMp[i] + '给' + ballMp[j])
-                    sheet.cell(beginLine + cur * 3 + 1, i * 4 + j + len(lineTypeList) + 4, techIndex[i][j])
-                sheet.cell(beginLine + cur * 3, i * 4 + 9 + len(lineTypeList) + 4, '合计')
-                sheet.cell(beginLine + cur * 3 + 1, i * 4 + 9 + len(lineTypeList) + 4, TechScoreCase.calSum(techIndex))
+                for j in range(10):
+                    sheet.cell(beginLine + cur * 3, i * 10 + j + len(lineTypeList) + 4, strikeMp[i] + '给' + ballMp[j])
+                    sheet.cell(beginLine + cur * 3 + 1, i * 10 + j + len(lineTypeList) + 4, techIndex[i][j])
+                sheet.cell(beginLine + cur * 3, i * 10 + 10 + len(lineTypeList) + 4, '合计')
+                sheet.cell(beginLine + cur * 3 + 1, i * 10 + 10 + len(lineTypeList) + 4, TechScoreCase.calSum(techIndex))
             cur += 1
 
         style_excel(sheet)
