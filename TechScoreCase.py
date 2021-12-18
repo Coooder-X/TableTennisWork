@@ -15,12 +15,6 @@ class TechScoreCase:
         self.strike_ball_score_4 = [[0 for i in range(10)] for i in range(4)]
         self.strike_ball_score_more = [[0 for i in range(10)] for i in range(4)]
 
-    # def __str__(self):
-    #     return ''.join('%s' %id for id in self.strike_ball_score_rec) + ' \n'
-    #     + ''.join('%s' %id for id in self.strike_ball_score_3) + ' \n'
-    #     + ''.join('%s' %id for id in self.strike_ball_score_4) + ' \n'
-    #     + ''.join('%s' %id for id in self.strike_ball_score_more) + ' \n'
-
     def display(self):
         print(self.strike_ball_score_rec, calSum(self.strike_ball_score_rec))
         print(self.strike_ball_score_3, calSum(self.strike_ball_score_3))

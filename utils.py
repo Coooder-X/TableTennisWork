@@ -106,15 +106,6 @@ def updateScoreCase(scoreCaseDict, rallyList, player1, player2, serveSide, winSi
         scoreCaseDict[winSide['name']].strike_ball_score_3[mp[winStrike]][mp[winBallPos]] += 1
     if winStroke['index'] == 1:  # 接发球得分情况
         scoreCaseDict[winSide['name']].strike_ball_score_rec[mp[winStrike]][mp[winBallPos]] += 1
-    # else:
-    #     if winStroke['index'] > 3:  # 双方击球大于4板认为是相持
-    #         scoreCaseDict[winSide['name']].strike_ball_score_more[mp[winStrike]][mp[winBallPos]] += 1
-    #     if winStroke['index'] == 3:  # 第4拍得分情况
-    #         scoreCaseDict[winSide['name']].strike_ball_score_4[mp[winStrike]][mp[winBallPos]] += 1
-    #     if winStroke['index'] == 2:  # 第3拍得分情况
-    #         scoreCaseDict[winSide['name']].strike_ball_score_3[mp[winStrike]][mp[winBallPos]] += 1
-    #     if winStroke['index'] == 1:  # 接发球得分情况
-    #         scoreCaseDict[winSide['name']].strike_ball_rec[mp[winStrike]][mp[winBallPos]] += 1
 
 
 def updateLineScoreCase(lineScoreCaseDict, rallyList, player1, player2, winSide, techIndex):

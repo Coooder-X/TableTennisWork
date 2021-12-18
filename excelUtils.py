@@ -1,5 +1,6 @@
 from openpyxl.styles import Alignment
 
+
 # 生成列名字典，只是为了方便修改列宽时指定列，key:数字，从1开始；value:列名，从A开始
 def get_num_colnum_dict():
     '''
