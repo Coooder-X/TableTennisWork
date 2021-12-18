@@ -1,6 +1,6 @@
 import openpyxl
 import json
-import utils
+import DoubleUtils
 
 
 def process(fileNameList):
@@ -46,7 +46,7 @@ def process(fileNameList):
         # print(playerList[utils.getServeSide(pointList[0])][0]['name'])  # 测试判断发球方的函数
 
         for point in pointList:  # point 记录该分中的信息
-            utils.getDoublesServeSide(point, playerList)
+            DoubleUtils.getDoublesServeSide(point, playerList)
             # rallyList = point['list']  # rallyList 记录该分中所有挥拍，每个元素是一个挥拍
             # serveSide = playerList[utils.getServeSide(point)][0]  # 下标 0 表示一方的第 0 个球员，单打都为0，serveSide 存储运动员对象
             # winSide = playerList[point['winSide']][0]
