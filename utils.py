@@ -18,6 +18,15 @@ def getServeSide(point):
     return serveSide
 
 
+# 返回本 point 发球的 player 对象
+def getDoublesServeSide(point, playerList):
+    rallyList = point['list']
+    serveStr = rallyList[0]['HitPlayer']
+    teamID, playerID = int(serveStr[0]), int(serveStr[1])
+    # print(playerList[teamID][playerID]['name'])
+    return playerList[teamID][playerID]
+
+
 # 根据当前 发球落点、发球方、该point数据，推断发球方胜负，并更新 dict
 def updateServeDict(serveDict, servePoint, serveSide, winSide):
     if not (servePoint in serveDict[serveSide['name']]):
