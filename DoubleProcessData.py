@@ -23,19 +23,9 @@ def process(fileNameList):
     playerList = data['player']
     team1 = playerList[0]
     team2 = playerList[1]
-    # player1 = playerList[0][0]['name']
-    # player2 = playerList[1][0]['name']
     print(playerList, team1, team2)
 
     roundList = data['record']['list']  # 若干局，元素是每个个大比分 局内的的信息
-
-    serveList = []
-    count = 0
-
-    serveDict = {}
-    for playerGroup in playerList:
-        for player in playerGroup:
-            serveDict[player['name']] = {'totalWin': 0, 'totalLost': 0}
 
     hitOrders = DoubleUtils.getHitOrders(playerList)
     print(hitOrders)
@@ -51,8 +41,7 @@ def process(fileNameList):
     for round in roundList:  # 其中的一局的信息
         cnt = 0
         cnt2 = 0
-        # for hitPair in hitOrders:
-        #     index = hitOrders.index(hitPair)
+
         pointList = round['list']  # pointList 中元素是该局的每一分的信息
         # print(playerList[utils.getServeSide(pointList[0])][0]['name'])  # 测试判断发球方的函数
         for point in pointList:
