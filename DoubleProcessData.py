@@ -53,11 +53,13 @@ def process(fileNameList):
 
                 A1 = hitPair[DoubleUtils.getChinaPlayer(hitPair, playerList)]  # 当前pair中中国运动员
                 B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, playerList)]  # 当前pair对方运动员
-                servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
 
                 if rallyNum == 1:  # 发球失误的情况特判一下/////////////////////////////////////////////////////
-                    pass
+                    if rallyList[-1] == hitPair[0] == A1:
+                        DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
+                    continue
 
+                servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
                 lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
                 # 满足A1->B1的模式，计算A1给B1赢的情况，分2种：A1发球和A2发球
                 if servePair[0][0] == A1[0] and hitPair[0][0] == A1[0]:  # 必须要满足A发球并且hitPair也是A在前，否则会出现拍数归类错误
