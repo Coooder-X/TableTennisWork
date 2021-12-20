@@ -64,6 +64,7 @@ def createTab(frame, callback):
     fileBox = Listbox(fm1, height=7, width=50, selectmode=SINGLE)
     fileBox.pack(side=LEFT, fill=BOTH, expand=True)
     fileBox.focus()
+    fileBox.insert(END, 'D:\MyGitKrakenFile\TableTennisWork\\20210726 东京奥运会 混双决赛 许昕刘诗雯vs水谷隼伊藤美诚-collect_project.json')
     # sb.config(command=fileBox.xview)
     fm1.pack()
 
