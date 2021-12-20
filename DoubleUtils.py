@@ -58,3 +58,7 @@ def getTeamMate(playerID):
     res = playerID[0]
     res += '0' if playerID[1] == '1' else '1'
     return res
+
+
+def createDoublesExcel(excelScoreCase, calScore):
+    pass
