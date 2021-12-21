@@ -1,5 +1,5 @@
 import os
-
+import excelUtils
 import openpyxl
 import json
 import DoubleUtils
@@ -150,6 +150,7 @@ def process(fileNameList, callback):
         excelScoreCase = {}
         calScore = {}
         count = 0
+        MaxScore = 0
         for i in range(len(scoreCase)):
             # print(hitOrders[i])
             p1 = DoubleUtils.getPlayerName(hitOrders[i][0], playerList)
@@ -175,6 +176,7 @@ def process(fileNameList, callback):
                     excelScoreCase[case][j][shoot] = scoreCase[i][j][key]
                     win += scoreCase[i][j][key]['win']
                     lost += scoreCase[i][j][key]['lost']
+                    MaxScore = max(MaxScore, scoreCase[i][j][key]['win'], scoreCase[i][j][key]['lost'])
                     count += scoreCase[i][j][key]['win'] + scoreCase[i][j][key]['lost']
             calScore[case2]['得分数'] = win
             calScore[case2]['失分数'] = lost
@@ -212,14 +214,17 @@ def process(fileNameList, callback):
                     sheet.merge_cells(start_row=nowLine+1+i*3, start_column=j*2+1, end_row=nowLine+1+i*3, end_column=j*2+2)
                     sheet.cell(nowLine + 2 + i * 3, j * 2 + 1, '得分').alignment = align
                     sheet.cell(nowLine + 2 + i * 3+1, j * 2 + 1, line[shoots[j]]['win']).alignment = align
+                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['win'], sheet, nowLine + 2 + i * 3+1, j * 2 + 1, 0)
                     sheet.cell(nowLine + 2 + i * 3, j * 2 + 2, '失分').alignment = align
                     sheet.cell(nowLine + 2 + i * 3+1, j * 2 + 2, line[shoots[j]]['lost']).alignment = align
+                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['lost'], sheet, nowLine + 2 + i * 3+1, j * 2 + 2, 1)
 
             nowLine += 7
 
         nowLine += 1
         fillRed = PatternFill("solid", fgColor="f89588")
         fillRGreen = PatternFill("solid", fgColor="76da91")
+
         sheet.cell(nowLine, 1, '发接发顺序').alignment = align
         sheet.cell(nowLine, 1).font = Font(bold=True)
         sheet.merge_cells(start_row=nowLine, start_column=1, end_row=nowLine, end_column=4)

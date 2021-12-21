@@ -1,4 +1,15 @@
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, PatternFill
+
+fill = [{
+        0: PatternFill("solid", fgColor="b5cfb4"),
+        1: PatternFill("solid", fgColor="90b78f"),
+        2: PatternFill("solid", fgColor="77a776")
+    }, {
+        0: PatternFill("solid", fgColor="f6cecb"),
+        1: PatternFill("solid", fgColor="f0ada8"),
+        2: PatternFill("solid", fgColor="ea8c85")
+    }
+    ]
 
 
 # 生成列名字典，只是为了方便修改列宽时指定列，key:数字，从1开始；value:列名，从A开始
@@ -60,3 +71,17 @@ def style_excel(sheet):
     # 此时max_column_dict字典中已存有当前sheet的所有列的最大列宽值，直接遍历字典修改列宽
     for key, value in max_column_dict.items():
         sheet.column_dimensions[num_str_dict[key]].width = value + 1
+
+
+# isLost = 0 代表win，否则 lost
+def fillColorByValue(Max, num, sheet, r, c, isLost):
+    if num == 0:
+        return
+    print(Max, num)
+    scope = Max / 3
+    if 0 < num < scope:
+        sheet.cell(r, c).fill = fill[isLost][0]
+    elif scope <= num < 2 * scope:
+        sheet.cell(r, c).fill = fill[isLost][1]
+    else:
+        sheet.cell(r, c).fill = fill[isLost][2]
