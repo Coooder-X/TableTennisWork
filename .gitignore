@@ -24,3 +24,4 @@ dist/
 *.xlsx
 *.spec
 __pycache__/
+build/
