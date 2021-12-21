@@ -59,6 +59,30 @@ def process(fileNameList):
                 rallyList = point['list']  # rallyList 记录该分中所有挥拍，每个元素是一个挥拍
                 rallyNum = len(rallyList)
 
+                #   单打情况--------------------------------------------------
+                if len(hitOrders) == 2:
+                    for hitPair in hitOrders:
+                        index = hitOrders.index(hitPair)
+                        A1, A2 = hitPair[0], hitPair[1]
+                        if rallyNum == 1:  # 发球失误的情况特判一下
+                            if rallyList[-1] == hitPair[0] == A1:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
+                            break
+                        servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
+                        lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
+                        if A1 == servePair[0]:
+                            if lastHitPair[0] == A1:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 2, 'win')
+                            else:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 1, 'lost')
+                        else:
+                            if lastHitPair[0] == A1:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 1, rallyNum - 2, 'win')
+                            else:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 1, rallyNum - 1, 'lost')
+                    continue
+
+                #   双打情况--------------------------------------------------
                 for hitPair in hitOrders:
                     index = hitOrders.index(hitPair)
 
@@ -131,10 +155,12 @@ def process(fileNameList):
             p1 = DoubleUtils.getPlayerName(hitOrders[i][0], playerList)
             p2 = DoubleUtils.getPlayerName(hitOrders[i][1], playerList)
             case = p1 + '→' + p2
+            case2 = case
             excelScoreCase[case] = {0: {}, 1: {}}
-            p3 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][0]), playerList)
-            p4 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][1]), playerList)
-            case2 = case + '→' + p3 + '→' + p4;
+            if len(hitOrders) == 8: #   区分单、双打情况的输出
+                p3 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][0]), playerList)
+                p4 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][1]), playerList)
+                case2 += '→' + p3 + '→' + p4;
             calScore[case2] = {'得分数': 0, '失分数': 0, '得分率': 0, '优劣势': ''}
             win = 0
             lost = 0
