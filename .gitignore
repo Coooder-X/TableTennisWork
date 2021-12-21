@@ -23,5 +23,6 @@ pnpm-debug.log*
 dist/
 *.xlsx
 *.spec
-__pycache__/
+/.idea/
+*/__pycache__
 build/
