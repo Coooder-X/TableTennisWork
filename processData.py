@@ -3,7 +3,7 @@ import utils
 from TechScoreCase import *
 
 
-def process(fileNameList):
+def process(fileNameList, callback):
     """
     jsonFile = ''
     data = {}
@@ -21,6 +21,9 @@ def process(fileNameList):
 
         data = jsonFile['data']
         playerList = data['player']
+        if len(playerList[0]) == 2: #   若是双打数据，报错，返回
+            callback()
+            return
         player1 = playerList[0][0]['name']
         player2 = playerList[1][0]['name']
         # print(playerList, player1, player2)

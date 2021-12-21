@@ -6,7 +6,7 @@ import DoubleUtils
 from openpyxl.styles import Alignment, PatternFill, Font
 
 
-def process(fileNameList):
+def process(fileNameList, callback):
     """
     jsonFile = ''
     data = {}

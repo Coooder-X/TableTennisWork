@@ -35,7 +35,7 @@ def process(listBox, callback):
             else:
                 tkinter.messagebox.showinfo('提示', '文件不存在')
         try:
-            callback(fileNameList)
+            callback(fileNameList, lambda: tkinter.messagebox.showinfo('提示', '单打功能不支持传入双打数据'))
         except PermissionError:
             tkinter.messagebox.showinfo('提示', '某些文件可能已打开或被占用，请先关闭')
     return show
