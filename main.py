@@ -31,3 +31,8 @@ GUI.createTab(frame2, DoubleProcessData.process)
 # 设置选中tab1
 tab.select(frame1)
 win.mainloop()
+
+'''
+   带控制台：   Pyinstaller -F -i tabletennis.ico main.py -n DataProcess-0.9
+   不带控制台： Pyinstaller -F -w -i tabletennis.ico main.py -n DataProcess-0.9
+'''

@@ -86,14 +86,14 @@ def process(fileNameList, callback):
                 for hitPair in hitOrders:
                     index = hitOrders.index(hitPair)
 
-                    A1 = hitPair[DoubleUtils.getChinaPlayer(hitPair, playerList)]  # 当前pair中中国运动员
-                    B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, playerList)]  # 当前pair对方运动员
-                    servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
-
                     if rallyNum == 1:  # 发球失误的情况特判一下
                         if rallyList[-1] == hitPair[0] == A1:
                             DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
                         continue
+
+                    A1 = hitPair[DoubleUtils.getChinaPlayer(hitPair, playerList)]  # 当前pair中中国运动员
+                    B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, playerList)]  # 当前pair对方运动员
+                    servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
 
                     lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
                     # 满足A1->B1的模式，计算A1给B1赢的情况，分2种：A1发球和A2发球
@@ -169,14 +169,15 @@ def process(fileNameList, callback):
                 #-------------这段代码用于把某情况的最大拍数以内补齐，即没数据的补0。若还不足3列，则补到3列
                 maxShoot = max(scoreCase[i][j].keys())
                 tmp = maxShoot
-                print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
+                # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
                 while tmp >= 0:
                     if tmp not in scoreCase[i][j].keys():
                         scoreCase[i][j][tmp] = {'win': 0, 'lost': 0}
-                        print('add')
+                        # print('add')
                     tmp -= 4
-                if len(scoreCase[i][j].keys()) < 3:
-                    scoreCase[i][j][maxShoot + 4] = {'win': 0, 'lost': 0}
+                while len(scoreCase[i][j].keys()) < 3:
+                    maxShoot += 4
+                    scoreCase[i][j][maxShoot] = {'win': 0, 'lost': 0}
                 #---------------
                 for key in sorted(scoreCase[i][j]):
                     if key == 0:
