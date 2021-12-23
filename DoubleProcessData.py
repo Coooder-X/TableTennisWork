@@ -7,14 +7,7 @@ from openpyxl.styles import Alignment, PatternFill, Font
 
 
 def process(fileNameList, callback):
-    """
-    jsonFile = ''
-    data = {}
-    player1 = ''
-    player2 = ''
-    playerList = []
-    roundList = []
-    """
+    serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
     nowLine = 1
     fileIdx = 0
     exl = openpyxl.Workbook()
@@ -47,26 +40,31 @@ def process(fileNameList, callback):
         c1 = 0
         c2 = 0
         c3 = 0
+        count = 0
         # print(DoubleUtils.getHitOrders(playerList))
 
-        for round in roundList:  # 其中的一局的信息
+        for roundId, round in enumerate(roundList):  # 其中的一局的信息
             cnt = 0
             cnt2 = 0
 
             pointList = round['list']  # pointList 中元素是该局的每一分的信息
             # print(playerList[utils.getServeSide(pointList[0])][0]['name'])  # 测试判断发球方的函数
-            for point in pointList:
+            for pointId, point in enumerate(pointList):
+                count += 1
                 rallyList = point['list']  # rallyList 记录该分中所有挥拍，每个元素是一个挥拍
                 rallyNum = len(rallyList)
 
                 #   单打情况--------------------------------------------------
                 if len(hitOrders) == 2:
-                    for hitPair in hitOrders:
-                        index = hitOrders.index(hitPair)
+                    for index, hitPair in enumerate(hitOrders):
+                        # index = hitOrders.index(hitPair)
                         A1, A2 = hitPair[0], hitPair[1]
                         if rallyNum == 1:  # 发球失误的情况特判一下
-                            if rallyList[-1] == hitPair[0] == A1:
+                            if rallyList[0]['HitPlayer'] == hitPair[0] == A1 and hitPair[1] == B1:
+                                cnt2 += 1
                                 DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
+                            elif rallyList[0]['HitPlayer'] == hitPair[0] == B1 and hitPair[1] == A1:
+                                DoubleUtils.updateScoreCase(scoreCase, index, 1, 1, 'win')
                             break
                         servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
                         lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
@@ -83,16 +81,33 @@ def process(fileNameList, callback):
                     continue
 
                 #   双打情况--------------------------------------------------
-                for hitPair in hitOrders:
-                    index = hitOrders.index(hitPair)
+                if roundId == 0 and pointId == 0:
+                    DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer'])
 
-                    if rallyNum == 1:  # 发球失误的情况特判一下
-                        if rallyList[-1] == hitPair[0] == A1:
-                            DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
-                        continue
+                if roundId == len(roundList):# 决胜局到5分换发球情况
+                    if max(point['score']) == 5 and (point['score'][0] + point['score'][1]) % 2 == 1:
+                        DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
+
+                for index, hitPair in enumerate(hitOrders):
+                    # index = hitOrders.index(hitPair)
 
                     A1 = hitPair[DoubleUtils.getChinaPlayer(hitPair, playerList)]  # 当前pair中中国运动员
                     B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, playerList)]  # 当前pair对方运动员
+
+                    if rallyNum == 1:  # 发球失误的情况特判一下
+                        pair = [rallyList[0]['HitPlayer'], serve_rec_order[rallyList[0]['HitPlayer']]]
+                        idx = hitOrders.index(pair)
+                        print('发球失误', hitPair, cnt, ':', cnt2)
+                        if pair[0] == A1:
+                            cnt2 += 1
+                            DoubleUtils.updateScoreCase(scoreCase, idx, 0, 0, 'lost')
+                        elif pair[0] == B1:
+                            print('对方发球失误')
+                            print(pair)
+                            cnt += 1
+                            DoubleUtils.updateScoreCase(scoreCase, idx, 1, 1, 'win')
+                        break
+
                     servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
 
                     lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
@@ -146,6 +161,7 @@ def process(fileNameList, callback):
             print(cnt, cnt2)
 
         print(scoreCase)
+        print('total point = ', count)
 
         excelScoreCase = {}
         calScore = {}
@@ -161,7 +177,7 @@ def process(fileNameList, callback):
             if len(hitOrders) == 8: #   区分单、双打情况的输出
                 p3 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][0]), playerList)
                 p4 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][1]), playerList)
-                case2 += '→' + p3 + '→' + p4;
+                case2 += '→' + p3 + '→' + p4
             calScore[case2] = {'得分数': 0, '失分数': 0, '得分率': 0, '优劣势': ''}
             win = 0
             lost = 0

@@ -62,3 +62,20 @@ def getTeamMate(playerID):
 
 def createDoublesExcel(excelScoreCase, calScore):
     pass
+
+
+def updateServeRecOrder(serve_rec_order, serve, rec=''):
+    if serve_rec_order['00'] == '': # 第一局第一分的初始化
+        serve_rec_order[serve] = rec
+        serve_rec_order[rec] = getTeamMate(serve)
+        serve_rec_order[getTeamMate(serve)] = getTeamMate(rec)
+        serve_rec_order[getTeamMate(rec)] = serve
+        return
+    if rec == '':
+        rec = serve_rec_order[serve]
+        serve_rec_order[serve] = getTeamMate(serve_rec_order[serve])
+        serve_rec_order[rec] = serve
+        serve_rec_order[getTeamMate(serve)] = rec
+        serve_rec_order[getTeamMate(rec)] = getTeamMate(serve)
+
+
