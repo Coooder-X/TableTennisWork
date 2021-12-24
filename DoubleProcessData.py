@@ -29,6 +29,8 @@ def process(fileNameList, callback):
         team2 = playerList[1]
         print(playerList, team1, team2)
 
+        TargetTeamPair = DoubleUtils.getTargetTeamID(playerList)
+
         roundList = data['record']['list']  # 若干局，元素是每个个大比分 局内的的信息
 
         hitOrders = DoubleUtils.getHitOrders(playerList)
@@ -96,8 +98,8 @@ def process(fileNameList, callback):
                 for index, hitPair in enumerate(hitOrders):
                     # index = hitOrders.index(hitPair)
 
-                    A1 = hitPair[DoubleUtils.getChinaPlayer(hitPair, playerList)]  # 当前pair中中国运动员
-                    B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, playerList)]  # 当前pair对方运动员
+                    A1 = hitPair[DoubleUtils.getTargetPlayer(hitPair, TargetTeamPair[0])]  # 当前pair中中国运动员
+                    B1 = hitPair[DoubleUtils.getOppositePlayer(hitPair, TargetTeamPair[0])]  # 当前pair对方运动员
 
                     if rallyNum == 1:  # 发球失误的情况特判一下
                         pair = [rallyList[0]['HitPlayer'], serve_rec_order[rallyList[0]['HitPlayer']]]

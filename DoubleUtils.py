@@ -32,20 +32,36 @@ def getHitOrders(playerList):
     return orderList
 
 
-def getChinaPlayer(hitPair, playerList):
-    for i in range(2):
-        teamID, playerID = int(hitPair[i][0]), int(hitPair[i][1])
-        if playerList[teamID][playerID]['country'] == '中国':
-            return i
-    return -1
+# 返回一个长度为2的列表，第一个元素表示作为统计的对象的队伍ID，第二个是对方的队伍ID
+# 如果一支中国一支国外，中国为统计对象，若两支中国或两支国外，选第一个
+# 注意返回的是字符串代表队伍类型
+def getTargetTeamID(playerList):
+    cnt = 0
+    res = 0
+    for idx in range(2):
+        team = playerList[idx]
+        player = team[0]
+        print(player)
+        if player['country'] == '中国':
+            cnt += 1
+            res = idx
+    if cnt == 1:
+        return [str(res), '0' if res == 1 else '1']
+    else:  # cnt == 0 or cnt == 2:
+        return ['0', '1']
 
 
-def getOppositePlayer(hitPair, playerList):
+# hitPair是形如 ['00', '10'] 的运动员编号对，本函数返回的是中国运动员在本列表中的下标
+def getTargetPlayer(hitPair, targetTeamID):
     for i in range(2):
-        teamID, playerID = int(hitPair[i][0]), int(hitPair[i][1])
-        if playerList[teamID][playerID]['country'] != '中国':
+        if hitPair[i][0] == targetTeamID:
             return i
-    return -1
+
+
+def getOppositePlayer(hitPair, targetTeamID):
+    for i in range(2):
+        if hitPair[i][0] != targetTeamID:
+            return i
 
 
 def updateScoreCase(scoreCase, index, beginType, num, res):
@@ -66,7 +82,7 @@ def createDoublesExcel(excelScoreCase, calScore):
 
 #   carry 双打换发球的情况，第一个if是开局初始化顺序，第二个是局间、决胜局第5分换次序的情况
 def updateServeRecOrder(serve_rec_order, serve, rec=''):
-    if serve_rec_order['00'] == '': # 第一局第一分的初始化
+    if serve_rec_order['00'] == '':  # 第一局第一分的初始化
         serve_rec_order[serve] = rec
         serve_rec_order[rec] = getTeamMate(serve)
         serve_rec_order[getTeamMate(serve)] = getTeamMate(rec)
@@ -80,6 +96,3 @@ def updateServeRecOrder(serve_rec_order, serve, rec=''):
         # serve_rec_order[rec] = serve
         # serve_rec_order[getTeamMate(serve)] = rec
         # serve_rec_order[getTeamMate(rec)] = getTeamMate(serve)
-
-
-
