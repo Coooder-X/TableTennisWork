@@ -36,6 +36,9 @@ def process(fileNameList, callback):
         # scoreCase在双打时有8个元素，每个元素是一个[]， 里面有2个dict，分别是2种开球情况，dict里面第x个元素存放第x拍的得失分{'win': 0, 'lose': 0}
         scoreCase = [[{}, {}] for i in range(len(hitOrders))]
         print(scoreCase)
+        matchResult = data['record']['result']
+        isFull = (abs(matchResult[0] - matchResult[1]) == 1)    #   是否打到决胜局
+        print('res', matchResult, isFull)
 
         c1 = 0
         c2 = 0
@@ -83,10 +86,16 @@ def process(fileNameList, callback):
                 #   双打情况--------------------------------------------------
                 if roundId == 0 and pointId == 0:
                     DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer'])
+                if roundId != 0 and pointId == 0:
+                    DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
 
-                if roundId == len(roundList):# 决胜局到5分换发球情况
-                    if max(point['score']) == 5 and (point['score'][0] + point['score'][1]) % 2 == 1:
+                if roundId == len(roundList) - 1 and isFull:   # 决胜局到5分换次序情况
+                    if max(point['score']) == 5:
                         DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
+                    # if max(point['score']) == 5 and (point['score'][0] + point['score'][1]) % 2 == 1:
+                    #     DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
+                    # elif max(point['score']) == 5 and (point['score'][0] + point['score'][1]) % 2 == 0:
+                    #     DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
 
                 for index, hitPair in enumerate(hitOrders):
                     # index = hitOrders.index(hitPair)
