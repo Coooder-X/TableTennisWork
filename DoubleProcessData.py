@@ -37,7 +37,7 @@ def process(fileNameList, callback):
         scoreCase = [[{}, {}] for i in range(len(hitOrders))]
         print(scoreCase)
         matchResult = data['record']['result']
-        isFull = (abs(matchResult[0] - matchResult[1]) == 1)    #   是否打到决胜局
+        isFull = (abs(matchResult[0] - matchResult[1]) == 1)  # 是否打到决胜局
         print('res', matchResult, isFull)
 
         c1 = 0
@@ -59,37 +59,33 @@ def process(fileNameList, callback):
 
                 #   单打情况--------------------------------------------------
                 if len(hitOrders) == 2:
-                    for index, hitPair in enumerate(hitOrders):
-                        # index = hitOrders.index(hitPair)
-                        A1, A2 = hitPair[0], hitPair[1]
-                        if rallyNum == 1:  # 发球失误的情况特判一下
-                            if rallyList[0]['HitPlayer'] == hitPair[0] == A1 and hitPair[1] == B1:
-                                cnt2 += 1
-                                DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
-                            elif rallyList[0]['HitPlayer'] == hitPair[0] == B1 and hitPair[1] == A1:
-                                DoubleUtils.updateScoreCase(scoreCase, index, 1, 1, 'win')
-                            break
-                        servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
-                        lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
-                        if A1 == servePair[0]:
-                            if lastHitPair[0] == A1:
-                                DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 2, 'win')
-                            else:
-                                DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 1, 'lost')
-                        else:
-                            if lastHitPair[0] == A1:
-                                DoubleUtils.updateScoreCase(scoreCase, index, 1, rallyNum - 2, 'win')
-                            else:
-                                DoubleUtils.updateScoreCase(scoreCase, index, 1, rallyNum - 1, 'lost')
+                    if rallyNum == 1:  # 发球失误的情况特判一下
+                        if rallyList[0]['HitPlayer'] == hitPair[0] == A1 and hitPair[1] == B1:
+                            cnt2 += 1
+                            DoubleUtils.updateScoreCase(scoreCase, index, 0, 0, 'lost')
+                        elif rallyList[0]['HitPlayer'] == hitPair[0] == B1 and hitPair[1] == A1:
+                            DoubleUtils.updateScoreCase(scoreCase, index, 1, 1, 'win')
+                        break
+                    servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
+                    lastHitPair = [rallyList[-2]['HitPlayer'], rallyList[-1]['HitPlayer']]
+                    index = hitOrders.index(servePair)
+                    another = 1 if index == 0 else 0
+                    if servePair[0] == lastHitPair[0]: #    发球的赢了
+                        DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 2, 'win')
+                        DoubleUtils.updateScoreCase(scoreCase, another, 1, rallyNum - 1, 'lost')
+                    else:
+                        DoubleUtils.updateScoreCase(scoreCase, index, 0, rallyNum - 1, 'lost')
+                        DoubleUtils.updateScoreCase(scoreCase, another, 1, rallyNum - 2, 'win')
                     continue
 
                 #   双打情况--------------------------------------------------
                 if roundId == 0 and pointId == 0:
-                    DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer'])
+                    DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'],
+                                                    rallyList[1]['HitPlayer'])
                 if roundId != 0 and pointId == 0:
                     DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
 
-                if roundId == len(roundList) - 1 and isFull:   # 决胜局到5分换次序情况
+                if roundId == len(roundList) - 1 and isFull:  # 决胜局到5分换次序情况
                     if max(point['score']) == 5:
                         DoubleUtils.updateServeRecOrder(serve_rec_order, rallyList[0]['HitPlayer'])
                     # if max(point['score']) == 5 and (point['score'][0] + point['score'][1]) % 2 == 1:
@@ -183,7 +179,7 @@ def process(fileNameList, callback):
             case = p1 + '→' + p2
             case2 = case
             excelScoreCase[case] = {0: {}, 1: {}}
-            if len(hitOrders) == 8: #   区分单、双打情况的输出
+            if len(hitOrders) == 8:  # 区分单、双打情况的输出
                 p3 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][0]), playerList)
                 p4 = DoubleUtils.getPlayerName(DoubleUtils.getTeamMate(hitOrders[i][1]), playerList)
                 case2 += '→' + p3 + '→' + p4
@@ -191,7 +187,7 @@ def process(fileNameList, callback):
             win = 0
             lost = 0
             for j in range(2):
-                #-------------这段代码用于把某情况的最大拍数以内补齐，即没数据的补0。若还不足3列，则补到3列
+                # -------------这段代码用于把某情况的最大拍数以内补齐，即没数据的补0。若还不足3列，则补到3列
                 maxShoot = max(scoreCase[i][j].keys())
                 tmp = maxShoot
                 # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
@@ -203,7 +199,7 @@ def process(fileNameList, callback):
                 while len(scoreCase[i][j].keys()) < 3:
                     maxShoot += 4
                     scoreCase[i][j][maxShoot] = {'win': 0, 'lost': 0}
-                #---------------
+                # ---------------
                 for key in sorted(scoreCase[i][j]):
                     if key == 0:
                         shoot = '发球'
@@ -215,19 +211,58 @@ def process(fileNameList, callback):
                     win += scoreCase[i][j][key]['win']
                     lost += scoreCase[i][j][key]['lost']
                     MaxScore = max(MaxScore, scoreCase[i][j][key]['win'], scoreCase[i][j][key]['lost'])
-                    count += scoreCase[i][j][key]['win'] + scoreCase[i][j][key]['lost']
-            calScore[case2]['得分数'] = win
-            calScore[case2]['失分数'] = lost
-            rate = float(win * 100) / float(win + lost)
-            calScore[case2]['得分率'] = format(rate, '.1f') + '%'
-            if rate > 50:
-                calScore[case2]['优劣势'] = '优势'
-            elif rate == 50:
-                calScore[case2]['优劣势'] = '均势'
-            else:
-                calScore[case2]['优劣势'] = '劣势'
+                #     count += scoreCase[i][j][key]['win'] + scoreCase[i][j][key]['lost']
+                # for key in sorted(scoreCase[p3p4_idx][j]):
+                #     # excelScoreCase[case][p3p4_idx][shoot] = scoreCase[p3p4_idx][j][key]
+                #     win += scoreCase[p3p4_idx][j][key]['win']
+                #     lost += scoreCase[p3p4_idx][j][key]['lost']
+            # calScore[case2]['得分数'] = win
+            # calScore[case2]['失分数'] = lost
+            # rate = 0  # float(win * 100) / float(win + lost)
+            # calScore[case2]['得分率'] = format(rate, '.1f') + '%'
+            # if rate > 50:
+            #     calScore[case2]['优劣势'] = '优势'
+            # elif rate == 50:
+            #     calScore[case2]['优劣势'] = '均势'
+            # else:
+            #     calScore[case2]['优劣势'] = '劣势'
 
         print(excelScoreCase)
+
+        #----------------- 每局下方不同轮次的得分情况、得分率统计 ------------------
+        for (i, beginPair) in enumerate(hitOrders):
+            win = 0
+            lost = 0
+            case = ''
+            if len(hitOrders) == 8:  # 区分单、双打情况的输出
+                p3 = DoubleUtils.getTeamMate(beginPair[0])
+                p4 = DoubleUtils.getTeamMate(beginPair[1])
+                case = DoubleUtils.getPlayerName(beginPair[0], playerList) + '→' + DoubleUtils.getPlayerName(
+                    beginPair[1], playerList) + '→' + \
+                       DoubleUtils.getPlayerName(p3, playerList) + '→' + DoubleUtils.getPlayerName(p4, playerList)
+                j = hitOrders.index([p3, p4])   #   后两个击球的运动员组合在hitOrders里的下标
+                for key in scoreCase[i][0].keys():  #   前两个击球的运动员的得分情况，一定是发球或者接发球的，因此下标是0
+                    win += scoreCase[i][0][key]['win']
+                    lost += scoreCase[i][0][key]['lost']
+                for key in scoreCase[j][1].keys():  #   后两个击球的运动员的得分情况，一定是第三或第四拍的，因此下标是1
+                    win += scoreCase[j][1][key]['win']
+                    lost += scoreCase[j][1][key]['lost']
+            else:   # 单打
+                case = DoubleUtils.getPlayerName(beginPair[0], playerList) + '→' + DoubleUtils.getPlayerName(
+                    beginPair[1], playerList)
+                for key in scoreCase[i][0].keys():
+                    win += scoreCase[i][0][key]['win']
+                    lost += scoreCase[i][0][key]['lost']
+            calScore[case]['得分数'] = win
+            calScore[case]['失分数'] = lost
+            rate = float(win * 100) / float(win + lost)
+            calScore[case]['得分率'] = format(rate, '.1f') + '%'
+            if rate > 50:
+                calScore[case]['优劣势'] = '优势'
+            elif rate == 50:
+                calScore[case]['优劣势'] = '均势'
+            else:
+                calScore[case]['优劣势'] = '劣势'
         print(calScore)
 
         for i in excelScoreCase.keys():
@@ -248,14 +283,17 @@ def process(fileNameList, callback):
                 line = doubleLine[i]
                 shoots = list(line.keys())
                 for j in range(len(shoots)):
-                    sheet.cell(nowLine+1+i*3, j*2+1, shoots[j]).alignment = align
-                    sheet.merge_cells(start_row=nowLine+1+i*3, start_column=j*2+1, end_row=nowLine+1+i*3, end_column=j*2+2)
+                    sheet.cell(nowLine + 1 + i * 3, j * 2 + 1, shoots[j]).alignment = align
+                    sheet.merge_cells(start_row=nowLine + 1 + i * 3, start_column=j * 2 + 1,
+                                      end_row=nowLine + 1 + i * 3, end_column=j * 2 + 2)
                     sheet.cell(nowLine + 2 + i * 3, j * 2 + 1, '得分').alignment = align
-                    sheet.cell(nowLine + 2 + i * 3+1, j * 2 + 1, line[shoots[j]]['win']).alignment = align
-                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['win'], sheet, nowLine + 2 + i * 3+1, j * 2 + 1, 0)
+                    sheet.cell(nowLine + 2 + i * 3 + 1, j * 2 + 1, line[shoots[j]]['win']).alignment = align
+                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['win'], sheet, nowLine + 2 + i * 3 + 1,
+                                                j * 2 + 1, 0)
                     sheet.cell(nowLine + 2 + i * 3, j * 2 + 2, '失分').alignment = align
-                    sheet.cell(nowLine + 2 + i * 3+1, j * 2 + 2, line[shoots[j]]['lost']).alignment = align
-                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['lost'], sheet, nowLine + 2 + i * 3+1, j * 2 + 2, 1)
+                    sheet.cell(nowLine + 2 + i * 3 + 1, j * 2 + 2, line[shoots[j]]['lost']).alignment = align
+                    excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['lost'], sheet, nowLine + 2 + i * 3 + 1,
+                                                j * 2 + 2, 1)
 
             nowLine += 7
 
