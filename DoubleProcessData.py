@@ -29,6 +29,7 @@ def process(fileNameList, callback):
         team2 = playerList[1]
         print(playerList, team1, team2)
 
+        #   得到统计对象的TeamID（str类型）
         TargetTeamPair = DoubleUtils.getTargetTeamID(playerList)
 
         roundList = data['record']['list']  # 若干局，元素是每个个大比分 局内的的信息
@@ -104,7 +105,7 @@ def process(fileNameList, callback):
                     if rallyNum == 1:  # 发球失误的情况特判一下
                         pair = [rallyList[0]['HitPlayer'], serve_rec_order[rallyList[0]['HitPlayer']]]
                         idx = hitOrders.index(pair)
-                        print('发球失误', hitPair, cnt, ':', cnt2)
+                        print('发球失误', cnt, ':', cnt2)
                         if pair[0] == A1:
                             cnt2 += 1
                             DoubleUtils.updateScoreCase(scoreCase, idx, 0, 0, 'lost')
@@ -112,7 +113,7 @@ def process(fileNameList, callback):
                             print('对方发球失误')
                             print(pair)
                             cnt += 1
-                            DoubleUtils.updateScoreCase(scoreCase, idx, 1, 1, 'win')
+                            DoubleUtils.updateScoreCase(scoreCase, idx, 0, 1, 'win')
                         break
 
                     servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
@@ -213,7 +214,7 @@ def process(fileNameList, callback):
                     win += scoreCase[i][j][key]['win']
                     lost += scoreCase[i][j][key]['lost']
                     MaxScore = max(MaxScore, scoreCase[i][j][key]['win'], scoreCase[i][j][key]['lost'])
-                #     count += scoreCase[i][j][key]['win'] + scoreCase[i][j][key]['lost']
+                    count += scoreCase[i][j][key]['win'] + scoreCase[i][j][key]['lost']
                 # for key in sorted(scoreCase[p3p4_idx][j]):
                 #     # excelScoreCase[case][p3p4_idx][shoot] = scoreCase[p3p4_idx][j][key]
                 #     win += scoreCase[p3p4_idx][j][key]['win']
