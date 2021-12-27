@@ -106,14 +106,16 @@ def process(fileNameList, callback):
                         pair = [rallyList[0]['HitPlayer'], serve_rec_order[rallyList[0]['HitPlayer']]]
                         idx = hitOrders.index(pair)
                         print('发球失误', cnt, ':', cnt2)
-                        if pair[0] == A1:
+                        if pair[0][0] == A1[0]:
+                            print('本方发球失误', pair)
                             cnt2 += 1
                             DoubleUtils.updateScoreCase(scoreCase, idx, 0, 0, 'lost')
-                        elif pair[0] == B1:
-                            print('对方发球失误')
-                            print(pair)
+                        elif pair[0][0] == B1[0]:
+                            print('对方发球失误', pair)
                             cnt += 1
                             DoubleUtils.updateScoreCase(scoreCase, idx, 0, 1, 'win')
+                        else:
+                            print(A1, B1, '|', pair)
                         break
 
                     servePair = [rallyList[0]['HitPlayer'], rallyList[1]['HitPlayer']]
@@ -191,7 +193,9 @@ def process(fileNameList, callback):
             lost = 0
             for j in range(2):
                 # -------------这段代码用于把某情况的最大拍数以内补齐，即没数据的补0。若还不足3列，则补到3列
-                maxShoot = max(scoreCase[i][j].keys())
+                maxShoot = 0
+                if len(scoreCase[i][j].keys()) != 0:    #   有可能某个A->B的轮次
+                    maxShoot = max(scoreCase[i][j].keys())
                 tmp = maxShoot
                 # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
                 while tmp >= 0:

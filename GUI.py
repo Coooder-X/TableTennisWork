@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-
+import functools
 from tkinter import *
 import tkinter
 import tkinter.messagebox
@@ -10,8 +10,12 @@ import windnd
 # 拖动文件到 listBox 里
 def dragged_files(listBox):
     def updateListBox(files):
+        fileList = []
         for item in files:
             item = item.decode('gbk')
+            fileList.append(item)
+        fileList.sort(key=lambda fileName: os.path.basename(fileName)[0:8])  # file 排序规则
+        for item in fileList:
             listBox.insert(END, item)
     return updateListBox
 
@@ -38,12 +42,14 @@ def process(listBox, callback):
             callback(fileNameList, lambda: tkinter.messagebox.showinfo('提示', '单打功能不支持传入双打数据'))
         except PermissionError:
             tkinter.messagebox.showinfo('提示', '某些文件可能已打开或被占用，请先关闭')
+
     return show
 
 
 def clearFile(listBox):
     def clear():
         listBox.delete(0, listBox.size())
+
     return clear
 
 
@@ -80,7 +86,6 @@ def createTab(frame, callback):
     buttonClear = tkinter.Button(fm2, text="清空", command=clearFile(fileBox))
     buttonClear.pack(side=RIGHT, padx=10)
     fm2.pack(pady=10)
-
 
 # 20211128 休斯顿世乒赛 女单半决赛 陈梦vs王曼昱-collect_project(new).json
 # D:\MyGitKrakenFile\TableTennisWork\20211128 休斯顿世乒赛 女单半决赛 陈梦vs王曼昱-collect_project(new).json
