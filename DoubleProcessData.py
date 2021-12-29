@@ -114,9 +114,9 @@ def process(fileNameList, callback):
         calScore = {}
         calScoreOpposite = {}
         count = 0
-        MaxScore = DoubleUtils.getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList)
+        MaxScore = DoubleUtils.getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList, False)
         MaxScoreOpposite = DoubleUtils.getExcelScoreCase(excelScoreCaseOpposite, scoreCaseOpposite,
-                                                         calScoreOpposite, hitOrders, playerList)
+                                                         calScoreOpposite, hitOrders, playerList, True)
 
         #----------------- 每局下方不同轮次的得分情况、得分率统计 ------------------
         DoubleUtils.getAdvanceRate(excelScoreCase, scoreCase, calScore, hitOrders, playerList)

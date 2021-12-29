@@ -183,7 +183,7 @@ def updateDoublesData(scoreCase, rallyList, hitOrders, TargetTeamPair, serve_rec
                     break
 
 
-def getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList):
+def getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList, isOpposite):
     MaxScore = 0
     count = 0
     for i in range(len(scoreCase)):
@@ -205,16 +205,31 @@ def getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList
             maxShoot = 0
             if len(scoreCase[i][j].keys()) != 0:  # 有可能某个A->B的轮次
                 maxShoot = max(scoreCase[i][j].keys())
-            tmp = maxShoot
-            # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
-            while tmp >= 0:
-                if tmp not in scoreCase[i][j].keys():
-                    scoreCase[i][j][tmp] = {'win': 0, 'lost': 0}
-                    # print('add')
-                tmp -= 4
-            while len(scoreCase[i][j].keys()) < 3:
-                maxShoot += 4
-                scoreCase[i][j][maxShoot] = {'win': 0, 'lost': 0}
+            if maxShoot != 0:
+                tmp = maxShoot
+                # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
+                while tmp >= 0:
+                    if tmp not in scoreCase[i][j].keys():
+                        scoreCase[i][j][tmp] = {'win': 0, 'lost': 0}
+                        # print('add')
+                    tmp -= 4
+                while len(scoreCase[i][j].keys()) < 3:
+                    maxShoot += 4
+                    scoreCase[i][j][maxShoot] = {'win': 0, 'lost': 0}
+            else:   #   这轮次的数据全空，没有得失分情况
+                if not isOpposite:
+                    if i % 2 == 0:
+                        maxShoot = 0 if j == 0 else 2
+                    else:
+                        maxShoot = 1 if j == 0 else 3
+                else:
+                    if i % 2 == 0:
+                        maxShoot = 1 if j == 0 else 3
+                    else:
+                        maxShoot = 0 if j == 0 else 2
+                while len(scoreCase[i][j].keys()) < 3:
+                    scoreCase[i][j][maxShoot] = {'win': 0, 'lost': 0}
+                    maxShoot += 4
             # ---------------
             for key in sorted(scoreCase[i][j]):
                 if key == 0:
