@@ -14,7 +14,7 @@ def dragged_files(listBox):
         for item in files:
             item = item.decode('gbk')
             fileList.append(item)
-        fileList.sort(key=lambda fileName: os.path.basename(fileName)[0:8])  # file 排序规则
+        fileList.sort(key=lambda fileName: os.path.basename(fileName)[0:8], reverse=True)  # file 排序规则
         for item in fileList:
             listBox.insert(END, item)
     return updateListBox
@@ -39,6 +39,7 @@ def process(listBox, callback):
             else:
                 tkinter.messagebox.showinfo('提示', '文件不存在')
         try:
+            fileNameList.sort(key=lambda fileName: os.path.basename(fileName)[0:8], reverse=True)
             callback(fileNameList, lambda: tkinter.messagebox.showinfo('提示', '单打功能不支持传入双打数据'))
         except PermissionError:
             tkinter.messagebox.showinfo('提示', '某些文件可能已打开或被占用，请先关闭')
