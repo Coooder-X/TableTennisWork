@@ -7,7 +7,7 @@ from openpyxl.styles import Alignment, PatternFill, Font
 
 
 def process(fileNameList, callback):
-    serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
+    # serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
     nowLine = 1
     fileIdx = 0
     exl = openpyxl.Workbook()
@@ -15,6 +15,7 @@ def process(fileNameList, callback):
 
     # fileNameList = ['20210726 东京奥运会 混双决赛 许昕刘诗雯vs水谷隼伊藤美诚-collect_project.json']
     for fileName in fileNameList:
+        serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
         fileIdx += 1
 
         print(fileName)
