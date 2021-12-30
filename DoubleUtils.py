@@ -205,7 +205,7 @@ def getExcelScoreCase(excelScoreCase, scoreCase, calScore, hitOrders, playerList
             maxShoot = 0
             if len(scoreCase[i][j].keys()) != 0:  # 有可能某个A->B的轮次
                 maxShoot = max(scoreCase[i][j].keys())
-            if maxShoot != 0:
+            if len(scoreCase[i][j].keys()) != 0:
                 tmp = maxShoot
                 # print('scoreCase[i][j]', scoreCase[i][j], maxShoot)
                 while tmp >= 0:
