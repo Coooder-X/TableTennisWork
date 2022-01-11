@@ -21,7 +21,7 @@ def dragged_files(listBox):
 
 
 # 根据传入回调，执行不同数据处理的逻辑
-def process(listBox, callback):
+def process(listBox, callback, isProgress):
     def show():
         fileNameList = []
         if listBox.size() == 0:
@@ -40,7 +40,7 @@ def process(listBox, callback):
                 tkinter.messagebox.showinfo('提示', '文件不存在')
         try:
             fileNameList.sort(key=lambda fileName: os.path.basename(fileName)[0:8], reverse=True)
-            callback(fileNameList, lambda: tkinter.messagebox.showinfo('提示', '单打功能不支持传入双打数据'))
+            callback(fileNameList, lambda: tkinter.messagebox.showinfo('提示', '单打功能不支持传入双打数据'), isProgress)
         except PermissionError:
             tkinter.messagebox.showinfo('提示', '某些文件可能已打开或被占用，请先关闭')
 
@@ -54,7 +54,7 @@ def clearFile(listBox):
     return clear
 
 
-def createTab(frame, callback):
+def createTab(frame, callback, frameID=0):
     # 进入消息循环，可以写控件
     fm1 = tkinter.Frame(frame)
     fm2 = tkinter.Frame(frame)
@@ -76,8 +76,18 @@ def createTab(frame, callback):
     fm1.pack()
 
     windnd.hook_dropfiles(fileBox, func=dragged_files(fileBox))
+    isProgress = IntVar()
+    isProgress.set(0)
 
-    buttonGenerate = tkinter.Button(fm2, text="生成", command=process(fileBox, callback))
+
+#   当收到复选框改变时，修改 button 的回调参数，执行不同的业务逻辑
+    def click(buttonGenerate):
+        def res():
+            print(isProgress.get())
+            buttonGenerate.configure(text="生成", command=process(fileBox, callback, isProgress.get()))
+        return res
+
+    buttonGenerate = tkinter.Button(fm2, text="生成", command=process(fileBox, callback, isProgress.get()))
     buttonGenerate.pack(side=LEFT)
     buttonDelete = tkinter.Button(fm2, text="删除当前项", command=lambda item=fileBox: {
         item.delete("active"),
@@ -86,6 +96,20 @@ def createTab(frame, callback):
     buttonDelete.pack(side=RIGHT, padx=10)
     buttonClear = tkinter.Button(fm2, text="清空", command=clearFile(fileBox))
     buttonClear.pack(side=RIGHT, padx=10)
+    checkBoxPanel = tkinter.Frame(fm2)
+
+    if frameID == 1:    #   如果是 frame2（双打功能）
+        # divideByProgress = tkinter.Checkbutton(frame, variable=isProgress, text='是否分阶段统计', font='宋体 -18', onvalue=1,
+        #                                        offvalue=0, command=click(buttonGenerate))
+        # divideByProgress.pack(side=tkinter.BOTTOM)
+        Radiobutton(checkBoxPanel, text='默认', variable=isProgress, value=0, command=click(buttonGenerate)).pack()
+        Radiobutton(checkBoxPanel, text='分阶段统计', variable=isProgress, value=1, command=click(buttonGenerate)).pack()
+        Radiobutton(checkBoxPanel, text='分态势统计', variable=isProgress, value=2, command=click(buttonGenerate)).pack()
+        checkBoxPanel.pack(side=BOTTOM)
+        # divideByState = tkinter.Checkbutton(frame, variable=isProgress, text='是否分taishi统计', font='宋体 -18', onvalue=1,
+        #                                        offvalue=0, command=click(buttonGenerate))
+        # divideByState.pack(side=tkinter.BOTTOM)
+        print('GUI', isProgress)
     fm2.pack(pady=10)
 
 # 20211128 休斯顿世乒赛 女单半决赛 陈梦vs王曼昱-collect_project(new).json

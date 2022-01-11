@@ -280,9 +280,9 @@ def getAdvanceRate(excelScoreCase, scoreCase, calScore, hitOrders, playerList):
         else:
             rate = float(win * 100) / float(win + lost)
         calScore[case]['得分率'] = format(rate, '.1f') + '%'
-        if rate > 50:
+        if win > lost:
             calScore[case]['优劣势'] = '优势'
-        elif rate == 50:
+        elif win == lost:
             calScore[case]['优劣势'] = '均势'
         else:
             calScore[case]['优劣势'] = '劣势'

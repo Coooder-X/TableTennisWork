@@ -3,7 +3,7 @@ import utils
 from TechScoreCase import *
 
 
-def process(fileNameList, callback):
+def process(fileNameList, callback, isProgress):
     """
     jsonFile = ''
     data = {}
