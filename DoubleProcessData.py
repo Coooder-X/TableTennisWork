@@ -288,36 +288,40 @@ def byProgress(fileNameList):
 def byState(fileNameList):
     exl = openpyxl.Workbook()
     fileIdx = 0
+
+    for state in range(len(stateNames)):
+        nowLine = 1
+        sheet = exl.create_sheet(stateNames[state], state)  # 打开该Excel里对应的sheet
     # fileNameList = ['20210726 东京奥运会 混双决赛 许昕刘诗雯vs水谷隼伊藤美诚-collect_project.json']
-    for fileName in fileNameList:
-        serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
-        fileIdx += 1
-        print(fileName)
-        with open(fileName, 'r', encoding='utf-8') as f:
-            jsonFile = f.read()
-            jsonFile = json.loads(jsonFile)
+        for fileName in fileNameList:
+            serve_rec_order = {'00': '', '01': '', '10': '', '11': ''}
+            fileIdx += 1
+            print(fileName)
+            with open(fileName, 'r', encoding='utf-8') as f:
+                jsonFile = f.read()
+                jsonFile = json.loads(jsonFile)
 
-        data = jsonFile['data']
-        playerList = data['player']
-        team1 = playerList[0]
-        team2 = playerList[1]
+            data = jsonFile['data']
+            playerList = data['player']
+            team1 = playerList[0]
+            team2 = playerList[1]
 
-        #   得到统计对象的TeamID（str类型）
-        TargetTeamPair = DoubleUtils.getTargetTeamID(playerList)
+            #   得到统计对象的TeamID（str类型）
+            TargetTeamPair = DoubleUtils.getTargetTeamID(playerList)
 
-        roundList = data['record']['list']  # 若干局，元素是每个个大比分 局内的的信息
+            roundList = data['record']['list']  # 若干局，元素是每个个大比分 局内的的信息
 
-        hitOrders = DoubleUtils.getHitOrders(playerList)
-        print(hitOrders)
-        matchResult = data['record']['result']
-        isFull = (abs(matchResult[0] - matchResult[1]) == 1)  # 是否打到决胜局
-        print('res', matchResult, isFull)
+            hitOrders = DoubleUtils.getHitOrders(playerList)
+            print(hitOrders)
+            matchResult = data['record']['result']
+            isFull = (abs(matchResult[0] - matchResult[1]) == 1)  # 是否打到决胜局
+            print('res', matchResult, isFull)
 
-        count = 0
+            count = 0
 
-        for state in range(len(stateNames)):
-            nowLine = 1
-            sheet = exl.create_sheet(stateNames[state], state)  # 打开该Excel里对应的sheet
+        # for state in range(len(stateNames)):
+        #     nowLine = 1
+        #     sheet = exl.create_sheet(stateNames[state], state)  # 打开该Excel里对应的sheet
             # scoreCase在双打时有8个元素，每个元素是一个[]， 里面有2个dict，分别是2种开球情况，dict里面第x个元素存放第x拍的得失分{'win': 0, 'lose': 0}
             scoreCase = [[{}, {}] for i in range(len(hitOrders))]
             scoreCaseOpposite = [[{}, {}] for i in range(len(hitOrders))]
@@ -428,7 +432,7 @@ def byState(fileNameList):
                 nowLine = DoubleUtils.fillExcel(excelScoreCaseOpposite, calScoreOpposite, tmpLine,
                                                 baseColumnOpposite, sheet, fileName, MaxScoreOpposite)
 
-    exl.save('（分态势）双打得失分数据统计（共' + str(fileIdx) + '场比赛）' + '.xlsx')
+    exl.save('（分态势）双打得失分数据统计（共' + str(len(fileNameList)) + '场比赛）' + '.xlsx')
 
 
 def process(fileNameList, callback, isProgress):
