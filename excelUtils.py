@@ -9,7 +9,7 @@ fill = [{
         1: PatternFill("solid", fgColor="f0ada8"),
         2: PatternFill("solid", fgColor="ea8c85")
     }
-    ]
+]
 
 
 # 生成列名字典，只是为了方便修改列宽时指定列，key:数字，从1开始；value:列名，从A开始
