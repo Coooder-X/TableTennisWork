@@ -1,7 +1,7 @@
 # 返回本 point 发球的 player 对象
 import os
 from openpyxl.styles import Alignment, PatternFill, Font
-import excelUtils
+import excel_utils
 
 
 def getDoublesServeSide(point, playerList):
@@ -312,12 +312,12 @@ def fillExcel(excelScoreCase, calScore, nowLine, baseColumn, sheet, fileName, Ma
                                   end_row=nowLine + 1 + i * 3, end_column=j * 2 + baseColumn + 1)
                 sheet.cell(nowLine + 2 + i * 3, j * 2 + baseColumn, '得分').alignment = align
                 sheet.cell(nowLine + 2 + i * 3 + 1, j * 2 + baseColumn, line[shoots[j]]['win']).alignment = align
-                excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['win'], sheet, nowLine + 2 + i * 3 + 1,
-                                            j * 2 + baseColumn, 0)
+                excel_utils.fillColorByValue(MaxScore, line[shoots[j]]['win'], sheet, nowLine + 2 + i * 3 + 1,
+                                             j * 2 + baseColumn, 0)
                 sheet.cell(nowLine + 2 + i * 3, j * 2 + baseColumn + 1, '失分').alignment = align
                 sheet.cell(nowLine + 2 + i * 3 + 1, j * 2 + baseColumn + 1, line[shoots[j]]['lost']).alignment = align
-                excelUtils.fillColorByValue(MaxScore, line[shoots[j]]['lost'], sheet, nowLine + 2 + i * 3 + 1,
-                                            j * 2 + baseColumn + 1, 1)
+                excel_utils.fillColorByValue(MaxScore, line[shoots[j]]['lost'], sheet, nowLine + 2 + i * 3 + 1,
+                                             j * 2 + baseColumn + 1, 1)
 
         nowLine += 7
 

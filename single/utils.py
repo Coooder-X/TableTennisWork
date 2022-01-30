@@ -1,7 +1,7 @@
 # 判断发球方，返回运动员下标
 import os
 import openpyxl
-import excelUtils
+import excel_utils
 from single import TechScoreCase
 from utils import make_dir, singleDir
 
@@ -211,7 +211,7 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict,
                 sheet.cell(beginLine + cur * 3 + 1, i * 10 + 10 + len(lineTypeList) + 4, TechScoreCase.calSum(techIndex))
             cur += 1
 
-        excelUtils.style_excel(sheet)
+        excel_utils.style_excel(sheet)
 
         # exl.save(fileName + '(' + playerName + '习惯性出手线路情况)' + '.xlsx')
         make_dir(singleDir)

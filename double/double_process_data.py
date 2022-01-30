@@ -1,6 +1,6 @@
 import openpyxl
 import json
-from double import DoubleUtils as dUts
+from double import double_utils as dUts
 import utils
 from utils import make_dir, doubleDir, doubleStateDir, doubleProgressDir
 
