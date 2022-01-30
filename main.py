@@ -1,6 +1,6 @@
 import tkinter
 from tkinter import ttk
-import processData
+from single import processData
 import DoubleProcessData
 from view.DoubleProcessView import doubleProcessTab
 from view.SingleProcessView import singleProcessTab

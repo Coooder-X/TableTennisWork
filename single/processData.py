@@ -1,6 +1,6 @@
 import json
-import utils
-from TechScoreCase import *
+from single.utils import getServeSide, updateServeDict, updateScoreCase, updateLineScoreCase, createExcel
+from single.TechScoreCase import *
 
 
 def process(fileNameList, callback):
@@ -89,7 +89,7 @@ def process(fileNameList, callback):
 
             for point in pointList:  # point 记录该分中的信息
                 rallyList = point['list']  # rallyList 记录该分中所有挥拍，每个元素是一个挥拍
-                serveSide = playerList[utils.getServeSide(point)][0]  # 下标 0 表示一方的第 0 个球员，单打都为0，serveSide 存储运动员对象
+                serveSide = playerList[getServeSide(point)][0]  # 下标 0 表示一方的第 0 个球员，单打都为0，serveSide 存储运动员对象
                 winSide = playerList[point['winSide']][0]
                 serve = rallyList[0]
                 recServe = rallyList[1]
@@ -102,11 +102,11 @@ def process(fileNameList, callback):
                 if len(rallyList) == 2:
                     c3 += 1
                 # 根据当前分输赢和发球落点，更新运动员发球得分情况
-                utils.updateServeDict(serveDict, servePoint, serveSide, winSide)
+                updateServeDict(serveDict, servePoint, serveSide, winSide)
                 # 根据当前 rally 信息，更新运动员（身位-落点）线路得分情况
-                utils.updateScoreCase(scoreCaseDict, rallyList, playerList[0][0], playerList[1][0], serveSide, winSide)
+                updateScoreCase(scoreCaseDict, rallyList, playerList[0][0], playerList[1][0], serveSide, winSide)
                 # 根据当前 rally 信息，更新运动员（身位-落点1-落点2）线路得分情况
-                utils.updateLineScoreCase(lineScoreCaseDict, rallyList, playerList[0][0], playerList[1][0],
+                updateLineScoreCase(lineScoreCaseDict, rallyList, playerList[0][0], playerList[1][0],
                                           winSide, rallyList[-2]['index'])
                 serveList.append(recServe)
 
@@ -116,4 +116,4 @@ def process(fileNameList, callback):
         scoreCaseDict['王曼昱'].display()
         print(lineScoreCaseDict)
         print(c1, c2, c3)
-        utils.createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, [player1, player2])
+        createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict, [player1, player2])
