@@ -2,6 +2,7 @@ import openpyxl
 import json
 from double import DoubleUtils as dUts
 import utils
+from utils import make_dir, doubleDir, doubleStateDir, doubleProgressDir
 
 gameProgress = utils.gameProgress
 gameState = utils.gameState
@@ -136,7 +137,9 @@ def notProgress(fileNameList):
             nowLine = dUts.fillExcel(excelScoreCaseOpposite, calScoreOpposite, tmpLine,
                                             baseColumnOpposite, sheet, fileName, MaxScoreOpposite)
 
-    exl.save('双打得失分数据统计（共' + str(fileIdx) + '场比赛）' + '.xlsx')
+    # exl.save('双打得失分数据统计（共' + str(fileIdx) + '场比赛）' + '.xlsx')
+    make_dir(doubleDir)
+    exl.save('./{}/双打得失分数据统计（共{}场比赛）.xlsx'.format(doubleDir, str(fileIdx)))
 
 
 def byProgress(fileNameList):
@@ -283,7 +286,9 @@ def byProgress(fileNameList):
                 nowLine = dUts.fillExcel(excelScoreCaseOpposite, calScoreOpposite, tmpLine,
                                                 baseColumnOpposite, sheet, fileName, MaxScoreOpposite)
 
-    exl.save('（分阶段）双打得失分数据统计（共' + str(fileIdx) + '场比赛）' + '.xlsx')
+    # exl.save('（分阶段）双打得失分数据统计（共' + str(fileIdx) + '场比赛）' + '.xlsx')
+    make_dir(doubleProgressDir)
+    exl.save('./{}/（分阶段）双打得失分数据统计（共{}场比赛）.xlsx'.format(doubleProgressDir, str(fileIdx)))
 
 
 def byState(fileNameList):
@@ -433,7 +438,9 @@ def byState(fileNameList):
                 nowLine = dUts.fillExcel(excelScoreCaseOpposite, calScoreOpposite, tmpLine,
                                                 baseColumnOpposite, sheet, fileName, MaxScoreOpposite)
 
-    exl.save('（分态势）双打得失分数据统计（共' + str(len(fileNameList)) + '场比赛）' + '.xlsx')
+    # exl.save('（分态势）双打得失分数据统计（共' + str(len(fileNameList)) + '场比赛）' + '.xlsx')
+    make_dir(doubleStateDir)
+    exl.save('./{}/（分态势）双打得失分数据统计（共{}场比赛）.xlsx'.format(doubleStateDir, str(fileIdx)))
 
 
 def process(fileNameList, callback, isProgress):

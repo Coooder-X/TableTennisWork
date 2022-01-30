@@ -1,4 +1,4 @@
-
+import os
 # gameProgress = [
 #     0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2,     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
 #     0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2,     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -95,5 +95,18 @@ gameState = [
     [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
     [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
 ]
+
+singleDir = '单打习惯性出手线路'
+doubleDir = '双打默认统计'
+doubleStateDir = '双打态势统计'
+doubleProgressDir = '双打阶段统计'
+
+
+def make_dir(dirName):
+    if os.path.exists(dirName):
+        print('exist')
+        return
+    print('no exist')
+    os.mkdir(dirName)
 
 

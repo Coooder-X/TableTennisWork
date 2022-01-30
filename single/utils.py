@@ -3,6 +3,7 @@ import os
 import openpyxl
 import excelUtils
 from single import TechScoreCase
+from utils import make_dir, singleDir
 
 
 def getServeSide(point):
@@ -212,5 +213,7 @@ def createExcel(fileName, serveDict, scoreCaseDict, lineScoreCaseDict,
 
         excelUtils.style_excel(sheet)
 
-        exl.save(fileName + '(' + playerName + '习惯性出手线路情况)' + '.xlsx')
+        # exl.save(fileName + '(' + playerName + '习惯性出手线路情况)' + '.xlsx')
+        make_dir(singleDir)
+        exl.save('./{}/{}({}习惯性出手线路情况).xlsx'.format(singleDir, fileName, playerName))
 
